@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fortnite Shop Timeline</title>
+<style>
+:root{box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);--bg:#f6f7fb;--fg:#1b1e2b;--mut:#6b7186;--card:#fff;--line:#dde0ea;--acc:#5b3df5}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#12141c;--fg:#e8eaf3;--mut:#9aa0b5;--card:#1c1f2b;--line:#2d3142;--acc:#9a86ff;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#12141c;--fg:#e8eaf3;--mut:#9aa0b5;--card:#1c1f2b;--line:#2d3142;--acc:#9a86ff;color-scheme:dark}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--fg);font:14px/1.4 system-ui,-apple-system,"Segoe UI",sans-serif;padding:16px}
+h1{font-size:20px;margin:0 0 2px}.sub{color:var(--mut);margin:0 0 12px}
+.ctl{display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:12px}
+.ctl label{display:flex;gap:6px;align-items:center;color:var(--mut)}
+input,button,textarea{font:inherit;color:var(--fg);background:var(--bg);border:1px solid var(--line);border-radius:6px;padding:4px 8px}
+button{cursor:pointer}button:hover{border-color:var(--acc)}
+input[type=number]{width:56px}input[type=range]{width:200px;padding:0}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:12px}
+@media(max-width:900px){.wrap{grid-template-columns:1fr}}
+.chart{background:var(--card);border:1px solid var(--line);border-radius:10px;overflow:auto;max-height:78vh}
+.plot{position:relative}
+.hd{display:flex;position:sticky;top:0;z-index:5;background:var(--card);border-bottom:1px solid var(--line)}
+.row{display:flex;height:30px;border-bottom:1px solid var(--line)}
+.lab{position:sticky;left:0;z-index:4;flex:none;background:var(--card);border-right:1px solid var(--line);padding:6px 8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:500}
+.trk{position:relative;flex:none}
+.bar{position:absolute;top:4px;height:22px;border:0;border-radius:5px;color:#fff;font-size:11px;padding:0 6px;text-align:left;white-space:nowrap;overflow:hidden;opacity:.4;cursor:pointer}
+.bar.hit{opacity:1;box-shadow:0 0 0 2px var(--acc)}
+.mo{height:18px;position:relative}.mo span{position:absolute;top:1px;font-size:11px;font-weight:600;color:var(--mut)}
+.dy{display:flex}.dy div{flex:none;text-align:center;font-size:10px;color:var(--mut);height:20px;line-height:20px;border-left:1px solid var(--line)}
+.dy .we{background:rgba(128,128,128,.12)}
+.handle{position:absolute;top:0;height:18px;background:var(--acc);color:#fff;font-size:11px;border-radius:4px 4px 0 0;cursor:grab;padding:0 6px;white-space:nowrap;overflow:hidden;touch-action:none;user-select:none}
+.ov{position:absolute;top:0;bottom:0;pointer-events:none;z-index:2}
+.win{position:absolute;top:0;bottom:0;background:color-mix(in srgb,var(--acc) 12%,transparent);border-left:2px solid var(--acc);border-right:2px solid var(--acc)}
+.today{position:absolute;top:0;bottom:0;width:2px;background:#e5484d}
+.cnt{display:flex}.cnt div{flex:none;text-align:center;font-size:10px;height:30px;line-height:30px;color:var(--fg)}
+.side{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:12px;align-self:start}
+.side h2{font-size:14px;margin:0 0 6px}.side ul{list-style:none;margin:0 0 10px;padding:0}
+.side li{display:flex;justify-content:space-between;gap:8px;padding:3px 0;border-bottom:1px dashed var(--line)}
+.ok{color:#18a058;font-weight:600}.mut{color:var(--mut)}
+dialog{background:var(--card);color:var(--fg);border:1px solid var(--line);border-radius:12px;max-width:760px;width:94vw;max-height:80vh;padding:16px}
+dialog::backdrop{background:rgba(0,0,0,.5)}
+dialog h2{margin:0 0 2px;font-size:18px}
+.it{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid var(--line)}
+.p{white-space:nowrap;color:var(--mut)}
+textarea{width:100%;height:160px;font-family:monospace;font-size:12px}
+
+.best{position:absolute;top:0;bottom:0;background:rgba(24,160,88,.22);border-left:2px solid #18a058;border-right:2px solid #18a058}
+.of{margin:0 0 14px}.oh{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-bottom:1px solid var(--line);margin-bottom:8px}
+.cg{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:8px}
+.cc{margin:0;font-size:11px;text-align:center}
+.im{aspect-ratio:1;background:var(--bg);border:1px solid var(--line);border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center}
+.im img{width:100%;height:100%;object-fit:cover}
+.im:empty::after{content:"no image";color:var(--mut);font-size:10px}
+.cc figcaption{margin-top:3px;overflow-wrap:anywhere}
+.side h2+p+ul+p{margin-top:0}
+</style></head><body>
+<h1>Fortnite Item Shop Timeline</h1>
+<p class="sub" id="src">Loading…</p>
+<div class="ctl">
+ <label>Window start <input type="date" id="ds"></label>
+ <label>Length <input type="number" id="len" min="1" max="60" value="14"> days</label>
+ <label><input type="range" id="sl" min="0" max="0" value="0"></label>
+ <button id="today">Today</button><button id="live">Refresh live data</button><button id="paste">Load JSON…</button>
+</div>
+<div class="wrap">
+ <div class="chart" id="chart"></div>
+ <div class="side" id="side"></div>
+</div>
+<dialog id="dlg"></dialog>
+<script>
+const DAY=864e5,DW=26,LW=170,API="https://fortnite-api.com/v2/shop",COS="https://fortnite-api.com/v2/cosmetics";
+const SNAP_DATE="2026-11-05";
+const S=[
+["DC","2026-11-02","2026-11-06",[["Harley Quinn Bundle",2000],["Harley Quinn",1500],["Catwoman Zero Bundle",1500],["Catwoman Zero",1200],["Punchline",800],["Harley Hitter",800],["Catwoman’s Grappling Claw",800]]],
+["Phantom Blade Zero","2026-10-30","2026-11-05",[["Soul + Sanguine bundle",1600],["Sanguine (pickaxe + back bling)",800]]],
+["The Mandalorian","2026-11-04","2026-11-07",[["Champions of Mandalore Bundle",2500],["Mandalorian Warrior + wrap",1800],["Mandalorian Warrior",1500],["Vibrodagger & Personal Shield",800],["Mandalorian Cape",400],["Beskar Forge",300],["Whistling Bird Salute",300],["For Mandalore",300]]],
+["Invincible","2026-11-05","2026-11-08",[["Guardians of the Globe Bundle",2800],["Allen the Alien Bundle",2000],["Gear Bundle",1800],["Omni-Man",1500],["Atom Eve",1500],["Invincible + Burger Mart Bag",1500],["Tygris + Invincible",1500],["Dupli-Kate",1500],["Reaniman Arm",800],["C.O.P. Axe",800],["Omni-Man Bass, Invincible Shredder",800]]],
+["Signal Boost","2026-11-01","2026-11-11",[["Dante Bundle",1800],["Elite Kado Thorne Bundle",1500],["Dante",1500],["Mecha Team Shadow",1500],["Elite Kado Thorne",1200],["Bushi",1200],["Air Jordan 11 ‘Space Jam’",1000],["Serge",800],["Lunelle",800],["Wild Gunner",800],["Crocs Echo Clog",800],["Psyonic Spear",500],["Kado Elite",500],["Psyonic Elite Cloak",300]]],
+["Peak Style","2026-11-02","2026-11-09",[["Andromeda Bundle",2000],["Gummi Team Leader Bundle",1500],["Fate-Carved Warrior Bundle",1500],["Andromeda",1500],["Scales",1200],["Raptorian The Brave",1200],["Syd",1200],["Crocs Classic Clog",1000],["Air Jordan 11 ‘Concord’",1000],["Rain-Bear",800],["Llamacorn Loungers",800],["Heartstompers",800],["Mystery Zone",800]]],
+["Adventure Time","2026-11-02","2026-11-06",[["Adventure Time Bundle",3800],["Ice King & Lemongrab Bundle",3200],["Cake the Cat Bundle",1600],["Finn the Human",1500],["Jake the Dog",1500],["Princess Bubblegum",1500],["Marceline",1500],["Ice King bundle",1500],["Peppermint Butler",1500]]],
+["KPop Demon Hunters","2026-11-04","2026-11-08",[["KPop Demon Hunters Bundle",3500],["Rumi (HUNTR/X)",1500],["Mira (HUNTR/X)",1500],["Zoey (HUNTR/X)",1500],["Pickaxes (Rumi, Mira, Zoey)",500],["Ramyeon back blings",300],["Zoey’s Thumbs Up",300]]],
+["One Piece","2026-11-01","2026-12-05",[["One Piece Bundle",4000],["Monkey D. Luffy bundle",1800],["Nami bundle",1600],["Usopp bundle",1600],["Going Merry",1200],["Straw Hat Guitar",800],["Giant Meat on the Bone",800],["Roasted Meat",400],["Multi-Punches Flex",300]]],
+["Treasure Hunters","2026-11-02","2026-11-07",[["Hospital Emergency Bundle",2200],["Nurse Miyako",1200],["Nurse Hikari",1200],["Trench Trawler + Anchor",1200],["Buccaneer + Seaworthy",1200],["Sea Wolf + Barrel & Booty",1200],["Fishstick + Saltwater Satchel",1200],["Adventure Peely + Nana Compass",1200],["Ruck",1200],["Aura",800]]],
+["Rambo","2026-11-03","2026-11-07",[["Rambo Bundle",2200],["John Rambo",1500],["Gunship",1200],["Rambo’s Combat Knife",500],["Prepare for Battle",300],["Rambo’s War",300]]],
+["Hype Squad","2026-11-03","2026-11-08",[["Aperture",500],["Entranced",500],["Stargazing",500],["Gabriela",500],["Firework",500],["LA CHONA",500],["Mystical Magical",500],["Rather Lie",500]]],
+["No Sweat","2026-11-03","2026-11-09",[["Sorina + Nightforged Blades",1400],["Stealthy Surveyor",1200],["Skully + Satchel",1200],["Sparkplug + Scrappy",1200],["Scorpius Agent",800],["Simone",800],["Bay",800],["Swamp Stalker",800]]],
+["Oatley’s Locker","2026-11-03","2026-11-05",[["Oatley’s Locker Bundle",2100],["Serenade + Fluttering Notes",1200],["Vision Board",800],["Ice Breaker",500],["Scanline",300],["Sweaty",200]]],
+["Inoxtag","2026-10-27","2026-11-05",[["Inoxtag Bundle",2000],["Inoxtag + Inoxtag’d",1500],["Kaizen Mountain Axes",800],["Ace’s Cozy Pack",600],["Lil’ 4x4",500],["Inoxtag’d",500]]],
+["Arknights: Endfield","2026-11-03","2026-11-06",[["Perlica",1500]]],
+["Corvette Stingray","2026-11-02","2026-11-08",[["Chevrolet Corvette Stingray bundle",2200],["Corvette Stingray wheels",400],["Silver Assassin wheels",400]]],
+["NASCAR Ford Mustang","2026-10-27","2026-11-05",[["NASCAR Next Gen Ford Mustang bundle",2200],["Next Gen Goodyear Racing wheels",200]]],
+["Komodo","2026-11-04","2026-11-10",[["Komodo bundle",1500]]],
+["Snoop Dogg I Cadillac","2026-11-04","2026-11-10",[["1966 Cadillac Deville bundle",2800],["SD Whitewall wheels",400]]],
+["Jam Tracks","2026-10-01","2026-11-25",[["~95 Jam Tracks (abbreviated here; load live data for the full list)",500],["Everlong – Foo Fighters",500],["Sad But True – Metallica",500],["Mi Gente – J Balvin",500],["Sandstorm – Darude",500],["Changes – 2Pac",500]]]
+];
+let secs=[],srcLabel="",win={start:0,len:14},T0=0,T1=0,cos=new Map(),rank=[],best=null;
+const $=id=>document.getElementById(id);
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const today=()=>{const d=new Date();return Date.UTC(d.getUTCFullYear(),d.getUTCMonth(),d.getUTCDate())};
+const fmt=ms=>new Date(ms).toLocaleDateString("en-GB",{day:"numeric",month:"short",timeZone:"UTC"});
+const iso=ms=>new Date(ms).toISOString().slice(0,10);
+function snapshot(){return S.map(([n,a,b,it])=>{const i=Date.parse(a+"T00:00:00Z"),o=Date.parse(b+"T00:00:00Z")+DAY;
+ return{name:n,in:i,out:o,items:it.map(([x,p])=>({n:x,p,a:i,o,cos:[{id:"snap:"+n+":"+x,n:x}]}))}})}
+const imgOf=o=>o&&(o.icon||o.smallIcon||o.featured||o.large||o.small||o.url)||null;
+const imgTag=(u,n)=>`<img loading="lazy" referrerpolicy="no-referrer" src="${esc(u)}" alt="${esc(n)}" onerror="this.remove()">`;
+function cosOf(e){
+ if(e.brItems&&e.brItems.length)return e.brItems.map(x=>({id:x.id,n:x.name,t:x.type&&x.type.displayValue,img:imgOf(x.images),br:1}));
+ if(e.tracks&&e.tracks.length)return e.tracks.map(x=>({id:"track:"+(x.id||x.title),n:x.title+" – "+x.artist,t:"Jam Track",img:x.albumArt}));
+ if(e.cars&&e.cars.length)return e.cars.map(x=>({id:"car:"+(x.id||x.name),n:x.name,t:"Car",img:imgOf(x.images)}));
+ if(e.instruments&&e.instruments.length)return e.instruments.map(x=>({id:"inst:"+(x.id||x.name),n:x.name,t:"Instrument",img:imgOf(x.images)}));
+ const d=e.newDisplayAsset,mi=d&&d.materialInstances&&d.materialInstances[0],im=mi&&mi.images;
+ const img=(e.bundle&&e.bundle.image)||(im&&(im.OfferImage||im.Background))||null;
+ return[{id:"offer:"+(e.offerId||e.devName),n:e.bundle?e.bundle.name:e.devName,t:e.bundle?"Bundle":undefined,img}]}
+function parse(entries){
+ const m=new Map();
+ for(const e of entries){
+  const ln=e.layout&&e.layout.name&&e.layout.name.trim();if(!ln)continue;
+  const a=Math.floor(Date.parse(e.inDate)/DAY)*DAY,b=Math.ceil(Date.parse(e.outDate)/DAY)*DAY;
+  let n,t;
+  if(e.bundle){n=e.bundle.name;t="Bundle"}
+  else if(e.tracks&&e.tracks[0]){n=e.tracks[0].title+" – "+e.tracks[0].artist;t="Jam Track"}
+  else if(e.brItems&&e.brItems[0]){n=[...new Set(e.brItems.map(x=>x.name))].join(" + ");t=e.brItems[0].type.displayValue}
+  else if(e.cars&&e.cars[0]){n=e.cars[0].name;t="Car"}
+  else if(e.instruments&&e.instruments[0]){n=e.instruments[0].name;t="Instrument"}
+  else n=e.devName;
+  let s=m.get(ln);if(!s){s={name:ln,in:a,out:b,items:[]};m.set(ln,s)}
+  s.in=Math.min(s.in,a);s.out=Math.max(s.out,b);s.items.push({n,t,p:e.finalPrice,a,o:b,cos:cosOf(e)});
+ }
+ return [...m.values()];
+}
+/* every individual cosmetic -> the span of days it is (or was) in the shop */
+function buildCos(list){const m=new Map();
+ for(const s of list)for(const o of s.items)for(const c of o.cos||[]){
+  const k=c.id||c.n,x=m.get(k);
+  if(x){x.in=Math.min(x.in,o.a);x.out=Math.max(x.out,o.o)}
+  else m.set(k,{id:k,n:c.n,t:c.t,in:o.a,out:o.o})}
+ return m}
+/* remember what this browser has seen, so the statistic gets better over time */
+function mergeHist(m){let h={};try{h=JSON.parse(localStorage.getItem("cosHist"))||{}}catch(e){}
+ for(const [k,c] of m){const x=h[k];
+  h[k]=x&&c.in<=x.out+DAY&&x.in<=c.out+DAY?{n:c.n,t:c.t,in:Math.min(x.in,c.in),out:Math.max(x.out,c.out)}:{n:c.n,t:c.t,in:c.in,out:c.out}}
+ const lim=today()-120*DAY;for(const k in h)if(h[k].out<lim)delete h[k];
+ try{localStorage.setItem("cosHist",JSON.stringify(h))}catch(e){}
+ const r=new Map();for(const k in h)r.set(k,{id:k,...h[k]});return r}
+/* for each day: N = cosmetics available, mean = average days left before they leave (last day = 1).
+   Ranked by most cosmetics, ties broken by the lowest mean. */
+function analyze(m){const cs=[...m.values()],R=[];if(!cs.length)return R;
+ let a=Infinity,b=-Infinity;for(const c of cs){a=Math.min(a,c.in);b=Math.max(b,c.out)}
+ for(let d=a;d<b;d+=DAY){let n=0,t=0;for(const c of cs)if(c.in<=d&&c.out>d){n++;t+=(c.out-d)/DAY}
+  if(n)R.push({d,n,mean:t/n})}
+ return R.sort((x,y)=>y.n-x.n||x.mean-y.mean)}
+function setData(list,label,persist){secs=list.sort((x,y)=>x.in-y.in||x.out-y.out);srcLabel=label;
+ cos=buildCos(secs);if(persist)cos=mergeHist(cos);
+ rank=analyze(cos);best=rank[0]||null;
+ let lo=today(),hi=today();for(const s of secs){lo=Math.min(lo,s.in);hi=Math.max(hi,s.out)}
+ for(const c of cos.values()){lo=Math.min(lo,c.in);hi=Math.max(hi,c.out)}
+ T0=lo-DAY;T1=hi+DAY;
+ const days=Math.round((T1-T0)/DAY);$("sl").max=days;
+ win.start=win.start?Math.min(Math.max(win.start,T0),T1-win.len*DAY):Math.min(Math.max(today(),T0),T1-win.len*DAY);
+ render()}
+async function getLive(){
+ try{const c=new AbortController();setTimeout(()=>c.abort(),8000);
+  const r=await fetch(API,{signal:c.signal});const j=await r.json();
+  const l=parse(j.data.entries);if(!l.length)throw 0;
+  setData(l,"Live data from fortnite-api.com, shop date "+j.data.date.slice(0,10),true);
+  try{localStorage.setItem("shopCache",JSON.stringify({d:j.data.entries,t:Date.now()}))}catch(e){}
+  return true}catch(e){return false}}
+function loadCache(){try{const c=JSON.parse(localStorage.getItem("shopCache"));if(c){const l=parse(c.d);if(l.length){setData(l,"Cached data from "+new Date(c.t).toLocaleString());return true}}}catch(e){}return false}
+function render(){
+ const W=Math.round((T1-T0)/DAY)*DW,days=Math.round((T1-T0)/DAY),ws=win.start,we=ws+win.len*DAY,td=today();
+ let mo="",dy="",cnt="",max=1;const counts=[];
+ for(let i=0;i<days;i++){const d=T0+i*DAY;counts.push(secs.filter(s=>s.in<=d&&s.out>d).length)}
+ max=Math.max(...counts,1);
+ for(let i=0;i<days;i++){const d=T0+i*DAY,dt=new Date(d),wk=[0,6].includes(dt.getUTCDay());
+  if(dt.getUTCDate()===1||i===0)mo+=`<span style="left:${i*DW+2}px">${dt.toLocaleDateString("en-GB",{month:"short",year:"2-digit",timeZone:"UTC"})}</span>`;
+  dy+=`<div class="${wk?"we":""}" style="width:${DW}px">${dt.getUTCDate()}</div>`;
+  cnt+=`<div style="width:${DW}px;background:color-mix(in srgb,var(--acc) ${Math.round(counts[i]/max*60)}%,transparent)">${counts[i]}</div>`}
+ let rows="";
+ secs.forEach((s,i)=>{const hit=s.in<we&&s.out>ws,l=(s.in-T0)/DAY*DW,w=(s.out-s.in)/DAY*DW;
+  rows+=`<div class="row"><div class="lab" style="width:${LW}px" title="${esc(s.name)}">${esc(s.name)}</div><div class="trk" style="width:${W}px;background-image:repeating-linear-gradient(to right,var(--line) 0 1px,transparent 1px ${DW}px)"><button class="bar${hit?" hit":""}" data-i="${i}" style="left:${l}px;width:${w}px;background:hsl(${i*47%360} 55% 42%)">${fmt(s.in)} – ${fmt(s.out-DAY)}</button></div></div>`});
+ $("chart").innerHTML=`<div class="plot" style="width:${W+LW}px"><div class="hd"><div class="lab" style="width:${LW}px;border-bottom:0">Section</div><div><div class="mo" style="width:${W}px">${mo}<div class="handle" id="hd" style="left:${(ws-T0)/DAY*DW}px;width:${win.len*DW}px">⇔ ${win.len}-day window</div></div><div class="dy" style="width:${W}px">${dy}</div></div></div>${rows}<div class="row"><div class="lab" style="width:${LW}px">Sections live</div><div class="cnt" style="width:${W}px">${cnt}</div></div><div class="ov" style="left:${LW}px;width:${W}px">${best?`<div class="best" style="left:${(best.d-T0)/DAY*DW}px;width:${DW}px"></div>`:""}<div class="win" style="left:${(ws-T0)/DAY*DW}px;width:${win.len*DW}px"></div><div class="today" style="left:${(td-T0)/DAY*DW+DW/2-1}px"></div></div></div>`;
+ $("chart").querySelectorAll(".bar").forEach(b=>b.onclick=()=>open(secs[b.dataset.i]));
+ $("hd").onpointerdown=drag;
+ $("ds").value=iso(ws);$("len").value=win.len;$("sl").value=Math.round((ws-T0)/DAY);
+ $("src").textContent=srcLabel+(srcLabel.startsWith("Snapshot")?" – the live API can’t be reached from this page, see Load JSON.":"");
+ side(ws,we)}
+function side(ws,we){
+ const L=secs.map(s=>({s,ov:Math.round((Math.min(s.out,we)-Math.max(s.in,ws))/DAY)})).filter(x=>x.ov>0).sort((a,b)=>b.ov-a.ov);
+ const full=L.filter(x=>x.ov>=win.len).length;
+ const snap=srcLabel.startsWith("Snapshot");
+ const bb=best?`<h2>Best shopping day</h2><p class="mut" style="margin:0 0 6px;font-size:12px">The day with the most cosmetics available at once; ties go to the lowest average days left before they leave. ${snap?"Approximate: the offline snapshot counts offers, not individual cosmetics.":"Based on what is in the shop now plus what this browser has seen before."}</p><ul>${rank.slice(0,5).map((r,i)=>`<li><span>${i?"":"★ "}${fmt(r.d)}</span><span class="${i?"mut":"ok"}">${r.n} cosmetics · ${r.mean.toFixed(1)}d avg</span></li>`).join("")}</ul><p style="margin:0 0 14px"><button id="gob">Show best day</button></p>`:"";
+ $("side").innerHTML=bb+`<h2>${fmt(ws)} – ${fmt(we-DAY)} (${win.len} days)</h2><p class="mut" style="margin:0 0 8px">${L.length} sections overlap the window, ${full} cover all of it.</p><ul>${L.map(x=>`<li><span>${esc(x.s.name)}</span><span class="${x.ov>=win.len?"ok":"mut"}">${x.ov}/${win.len}d</span></li>`).join("")}</ul><p class="mut" style="margin:0;font-size:12px">Bars with an outline are in the window, the green column is the best day. The bottom row counts sections live each day. Click a bar to see its cosmetics.</p>`;
+ if(best)$("gob").onclick=()=>{win.start=best.d;clamp();$("chart").scrollLeft=(best.d-T0)/DAY*DW-60}}
+const imgCache={};
+async function fillImg(el){const id=el.dataset.id;if(!id)return;
+ try{imgCache[id]=imgCache[id]||fetch(COS+"/br/"+encodeURIComponent(id)).then(r=>r.json()).then(j=>imgOf(j.data.images));
+  const u=await imgCache[id];if(u)el.innerHTML=imgTag(u,"")}catch(e){}}
+function open(s){
+ const items=s.items.slice().sort((a,b)=>b.p-a.p);
+ const card=c=>`<figure class="cc" title="${esc(c.n)}"><div class="im"${!c.img&&c.br&&c.id?` data-id="${esc(c.id)}"`:""}>${c.img?imgTag(c.img,c.n):""}</div><figcaption>${esc(c.n)}${c.t?` <span class="mut">· ${esc(c.t)}</span>`:""}</figcaption></figure>`;
+ $("dlg").innerHTML=`<h2>${esc(s.name)}</h2><p class="mut" style="margin:0 0 10px">${fmt(s.in)} – ${fmt(s.out-DAY)} · ${items.length} offers</p><div style="overflow:auto;max-height:62vh">${items.map(i=>`<div class="of"><div class="oh"><span><b>${esc(i.n)}</b>${i.t?` <span class="mut">· ${esc(i.t)}</span>`:""} <span class="mut">· until ${fmt(i.o-DAY)}</span></span><span class="p">${i.p} V-Bucks</span></div><div class="cg">${(i.cos||[]).map(card).join("")}</div></div>`).join("")}</div><p style="text-align:right;margin:10px 0 0"><button onclick="dlg.close()">Close</button></p>`;
+ $("dlg").querySelectorAll(".im[data-id]").forEach(fillImg);
+ $("dlg").showModal()}
+function drag(e){e.preventDefault();const x0=e.clientX,s0=win.start;
+ const mv=ev=>{const d=Math.round((ev.clientX-x0)/DW);win.start=Math.min(Math.max(s0+d*DAY,T0),T1-win.len*DAY);render()};
+ const up=()=>{removeEventListener("pointermove",mv);removeEventListener("pointerup",up)};
+ addEventListener("pointermove",mv);addEventListener("pointerup",up)}
+function clamp(){win.start=Math.min(Math.max(win.start,T0),T1-win.len*DAY);render()}
+$("ds").onchange=e=>{win.start=Date.parse(e.target.value+"T00:00:00Z")||win.start;clamp()};
+$("len").onchange=e=>{win.len=Math.min(60,Math.max(1,+e.target.value||14));clamp()};
+$("sl").oninput=e=>{win.start=T0+e.target.value*DAY;render()};
+$("today").onclick=()=>{win.start=today();clamp();$("chart").scrollLeft=(today()-T0)/DAY*DW-60};
+$("live").onclick=async()=>{$("src").textContent="Fetching…";if(!(await getLive())){srcLabel=srcLabel||"Snapshot";$("src").textContent="Live fetch failed (blocked or offline). Use Load JSON instead."}};
+$("paste").onclick=()=>{$("dlg").innerHTML=`<h2>Load shop JSON</h2><p class="mut">Open <b>${API}</b> in a new tab, copy everything, and paste it here.</p><textarea id="ta"></textarea><p style="text-align:right;margin:10px 0 0"><button onclick="dlg.close()">Cancel</button> <button id="go">Load</button></p>`;$("dlg").showModal();
+ $("go").onclick=()=>{try{const j=JSON.parse($("ta").value);const l=parse(j.data?j.data.entries:j);if(!l.length)throw 0;setData(l,"Loaded JSON, shop date "+((j.data&&j.data.date)||"").slice(0,10),true);try{localStorage.setItem("shopCache",JSON.stringify({d:j.data?j.data.entries:j,t:Date.now()}))}catch(e){}$("dlg").close()}catch(e){alert("That doesn’t look like the shop JSON.")}}};
+window.dlg=$("dlg");
+(async()=>{setData(snapshot(),"Snapshot from "+SNAP_DATE);$("today").click();
+ if(!(await getLive()))loadCache();
+ setInterval(getLive,36e5);
+ (function rot(){setTimeout(()=>{getLive();setTimeout(getLive,3e5);rot()},today()+DAY+6e4-Date.now())})();
+ document.addEventListener("visibilitychange",()=>{if(!document.hidden)getLive()})})();
+</script></body></html>
